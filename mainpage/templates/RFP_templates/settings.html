@@ -1,0 +1,55 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{% static 'RFP_static/settings.css' %}">
+</head>
+<body class="body">
+    <div class="column-left">
+        <a href="{% url 'RFP:start' %}" class="large-text">RFP</a>
+        <ul>
+            <li>
+                <a href="{% url 'RFP:reserve_pitch' %}">Reserve a pitch</a>
+            </li>
+            <li>
+                <a href="">Friends</a>
+            </li>
+            <li>
+                <a href="">Shop</a>
+            </li>
+            <li>
+                <a href="{% url 'RFP:settings' %}">Settings</a>
+            </li>
+        </ul>
+    </div>
+    <div class="column-right">
+        <h1>Settings</h1>
+        <ul>
+            <li>
+                <h3>Change Name</h3>
+                <label>New name:</label>
+                <input type="text" id="name" name="new_name" required>
+                <button type="submit" class="button">Set new name</button>
+            </li>
+            <li>
+                <h3>Change Password</h3>
+                <label>New password:</label>
+                <input type="text" id="password" name="new_password" required>
+                <button type="submit" class="button">Set new password</button>
+            </li>
+            <li>
+                <h3>Change Email</h3>
+                <label>New email:</label>
+                <input type="text" id="email" name="new_email" required>
+                <button type="submit" class="button">Set new email</button>
+            </li>
+        </ul>
+        <form action="{% url 'RFP:start' %}" method="get">
+            <button type="submit" class="button">Back</button>
+        </form>
+    </div>
+</body>
+</html>

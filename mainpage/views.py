@@ -29,7 +29,10 @@ def shop(request):
     return HttpResponse('This is the shop menu')
 
 def settings(request):
-    return HttpResponse('Here are the settings') 
+    context = {
+
+    }
+    return render(request, 'RFP_templates/settings.html', context) 
 
 def detail(request, id):
     pitch = Pitch.objects.get(pk=id)

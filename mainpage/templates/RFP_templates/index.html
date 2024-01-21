@@ -1,24 +1,43 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="{% static 'RFP_static/index.css' %}">
 </head>
-<body>
-    <ul>
-        <li>
-            <a href="{% url 'RFP:reserve_pitch' %}">Reserve a pitch</a>
-        </li>
-        <li>
-            <a href="">Friends</a>
-        </li>
-        <li>
-            <a href="">Shop</a>
-        </li>
-        <li>
-            <a href="">Settings</a>
-        </li>
-    </ul>
+<body class="body">
+    <div class="column-left">
+        <a href="{% url 'RFP:start' %}" class="large-text">RFP</a>
+        <ul>
+            <li>
+                <a href="{% url 'RFP:reserve_pitch' %}">Reserve a pitch</a>
+            </li>
+            <li>
+                <a href="">Friends</a>
+            </li>
+            <li>
+                <a href="">Shop</a>
+            </li>
+            <li>
+                <a href="{% url 'RFP:settings' %}">Settings</a>
+            </li>
+        </ul>
+    </div>
+    <div class="column-right">
+        <div class="searchContainer">
+            <input type="search" class="searchBar" placeholder="Add post...">
+            <button class="button" id="button" type="submit">Post</button>
+        </div>
+        {% for post in posts %}
+            <ul>
+                <li>
+                    <p>From: {{ post.from_user }}, at: {{ post.written_at }}</p>
+                    <p>{{ post.message }}</p>
+                </li>
+            </ul>   
+        {% endfor %}
+    </div>
 </body>
 </html>

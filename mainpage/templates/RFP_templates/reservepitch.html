@@ -1,15 +1,43 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="{% static 'RFP_static/reservepitch.css' %}">
 </head>
-<body>
-    <h1> Pitches </h1>
-    {% for pitch in pitches %}
-        <a href="{% url 'RFP:detail' pitch.id %}">{{ pitch.name }}</a>
-        <p></p>
-    {% endfor %}
+<body class="body">
+    <div class="column-left">
+        <a href="{% url 'RFP:start' %}" class="large-text">RFP</a>
+        <ul>
+            <li>
+                <a href="{% url 'RFP:reserve_pitch' %}">Reserve a pitch</a>
+            </li>
+            <li>
+                <a href="">Friends</a>
+            </li>
+            <li>
+                <a href="">Shop</a>
+            </li>
+            <li>
+                <a href="{% url 'RFP:settings' %}">Settings</a>
+            </li>
+        </ul>
+    </div>
+    <div class="column-right">
+        {% for pitch in pitches %}
+            <ul>
+                <li>
+                    <a href="{% url 'RFP:detail' pitch.id %}">{{ pitch.name }}</a>
+                    <p>{{ pitch.address }}</p>
+                    <p>{{ pitch.phone_number }}</p>
+                </li>
+            </ul>
+        {% endfor %}
+        <form action="{% url 'RFP:start' %}" method="get">
+            <button type="submit" class="button">Back</button>
+        </form>
+    </div>
 </body>
 </html>
