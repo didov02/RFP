@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .models import Post
 from .models import Pitch
@@ -40,3 +40,15 @@ def detail(request, id):
         'pitch':pitch,
     }
     return render(request, 'RFP_templates/detail.html', context)
+
+def add_post(request):
+    if request.method == 'POST':
+        from_user = request.POST.get('from_user')
+        written_at = request.POST.get('written_at')
+        message = request.POST.get('message')
+
+        Post.objects.create(from_user=from_user, written_at=written_at, message=message)
+
+        return redirect('RFP_templates/index.html')
+    else:
+        return render(request, 'RFP_templates/index.html')

@@ -4,31 +4,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Main Page</title>
     <link rel="stylesheet" href="{% static 'RFP_static/index.css' %}">
 </head>
 <body class="body">
     <div class="column-left">
         <a href="{% url 'RFP:start' %}" class="large-text">RFP</a>
-        <ul>
-            <li>
-                <a href="{% url 'RFP:reserve_pitch' %}">Reserve a pitch</a>
+        <ul class="navbar">
+            <li class="navrow">
+                <a class="navitem" href="{% url 'RFP:reserve_pitch' %}">Reserve a pitch</a>
             </li>
-            <li>
-                <a href="">Friends</a>
+            <li class="navrow">
+                <a class="navitem" href="">Friends</a>
             </li>
-            <li>
-                <a href="">Shop</a>
+            <li class="navrow">
+                <a class="navitem" href="">Shop</a>
             </li>
-            <li>
-                <a href="{% url 'RFP:settings' %}">Settings</a>
+            <li class="navrow">
+                <a class="navitem" href="{% url 'RFP:settings' %}">Settings</a>
             </li>
         </ul>
     </div>
     <div class="column-right">
         <div class="searchContainer">
             <input type="search" class="searchBar" placeholder="Add post...">
-            <button class="button" id="button" type="submit">Post</button>
+            <form method="post" action="{% url 'RFP:add_post' %}">
+                {% csrf_token %}
+                <button class="button" id="button" type="submit">Post</button>
+            </form>
         </div>
         {% for post in posts %}
             <ul>

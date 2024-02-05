@@ -4,24 +4,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Settings</title>
     <link rel="stylesheet" href="{% static 'RFP_static/settings.css' %}">
 </head>
 <body class="body">
     <div class="column-left">
         <a href="{% url 'RFP:start' %}" class="large-text">RFP</a>
-        <ul>
-            <li>
-                <a href="{% url 'RFP:reserve_pitch' %}">Reserve a pitch</a>
+        <ul class="navbar">
+            <li class="navrow">
+                <a class="navitem" href="{% url 'RFP:reserve_pitch' %}">Reserve a pitch</a>
             </li>
-            <li>
-                <a href="">Friends</a>
+            <li class="navrow">
+                <a class="navitem" href="">Friends</a>
             </li>
-            <li>
-                <a href="">Shop</a>
+            <li class="navrow">
+                <a class="navitem" href="">Shop</a>
             </li>
-            <li>
-                <a href="{% url 'RFP:settings' %}">Settings</a>
+            <li class="navrow">
+                <a class="navitem active" href="{% url 'RFP:settings' %}">Settings</a>
             </li>
         </ul>
     </div>
