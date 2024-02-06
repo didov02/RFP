@@ -1,0 +1,12 @@
+{% load static %}
+<head>
+    <link rel="stylesheet" href="{% static 'users_static/login.css' %}">
+</head>
+<div class="container">
+    <form method="post">
+        {% csrf_token %}
+        {{ form }}
+        <button type="submit" class="button">Login</button>
+    </form>
+    <a href="{% url 'register' %}">You don't have an account</a>
+</div>

@@ -11,7 +11,16 @@
 </head>
 <body class="body">
     <div class="column-left">
-        <a href="{% url 'RFP:start' %}" class="large-text">RFP</a>
+        <div class="row">
+            <div class="col">
+                <a href="{% url 'RFP:start' %}" class="large-text">RFP</a>
+            </div>
+            <div class="col text-right" style="margin-top: 40px; margin-left:150px">
+                {% if user.is_authenticated %}
+                    <span class="username" style="font-size: 1.5em;">{{ user.username }}</span>
+                {% endif %}
+            </div>
+        </div>
         <ul class="nav_bar">
             <li class="nav_row">
                 <a class="nav_item" href="{% url 'RFP:reserve_pitch' %}">Reserve a pitch</a>
@@ -25,8 +34,33 @@
             <li class="nav_row">
                 <a class="nav_item" href="{% url 'RFP:settings' %}">Settings</a>
             </li>
+            <li class="nav_row">
+                <a class="nav_item" href="">Personal Info</a>
+            </li>
+            <li class="nav_row">
+                <a class="nav_item" href="">Change Personal Info</a>
+            </li>
+            <li class="nav_row">
+                <a class="nav_item" href="">Bought Items</a>
+            </li>
         </ul>
+        {% if user.is_authenticated %}
+            <form action="{% url 'logout' %}" method="get" style="margin-top: auto; margin-bottom: 10px; margin-left:10px; width: 100%">
+                <button type="submit" class="button">Logout</button>
+            </form>
+        {% endif %}
     </div>
+
+    <div class="alert-container">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}" style="width: 80%;">
+                    {{ message }}
+                </div>  
+            {% endfor %}
+        {% endif %}
+    </div>
+
     {% block body %}
     {% endblock %}
 </body>

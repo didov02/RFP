@@ -1,0 +1,10 @@
+{% load static %}
+<head>
+    <link rel="stylesheet" href="{% static 'users_static/logout.css' %}">
+</head>
+<div class="container">
+    <h1>You have been logged out.</h1>
+    <form action="{% url 'login' %}" method="get">
+        <button type="submit" class="button">Ok</button>
+    </form>
+</div>

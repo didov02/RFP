@@ -126,7 +126,11 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 STATIC_URL = '/static/'
-print(BASE_DIR)
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'mainpage\static\RFP_static')]
+LOGIN_REDIRECT_URL = 'RFP:start'
+LOGIN_URL = 'login'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'pictures')
+MEDIA_URL = '/pictures/'
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'mainpage/static/RFP_static'),
+                    os.path.join(BASE_DIR, 'users/static/users_static'),]
 VENV_PATH = os.path.dirname(BASE_DIR)
 STATIC_ROOT = os.path.join(VENV_PATH, 'static_root')
