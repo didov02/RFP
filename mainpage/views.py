@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .models import Post
-from .models import Pitch
+from .models import Post, Item, Pitch
 from django.template import loader
 
 # Create your views here.
@@ -20,13 +19,20 @@ def reserve_pitch(request):
     return render(request, 'RFP_templates/reservepitch.html', context)
 
 def friends(request):
-    return HttpResponse('This is the friends menu')
+    context = {
+
+    }
+    return render(request, 'RFP_templates/friends.html', context)
 
 def add_friend(request):
     return HttpResponse('Here you can add friends')
 
 def shop(request):
-    return HttpResponse('This is the shop menu')
+    items = Item.objects.all()
+    context = {
+        'items' : items
+    }
+    return render(request, 'RFP_templates/shop.html', context)
 
 def settings(request):
     context = {

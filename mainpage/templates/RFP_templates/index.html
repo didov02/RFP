@@ -1,30 +1,5 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Main Page</title>
-    <link rel="stylesheet" href="{% static 'RFP_static/index.css' %}">
-</head>
-<body class="body">
-    <div class="column-left">
-        <a href="{% url 'RFP:start' %}" class="large-text">RFP</a>
-        <ul class="navbar">
-            <li class="navrow">
-                <a class="navitem" href="{% url 'RFP:reserve_pitch' %}">Reserve a pitch</a>
-            </li>
-            <li class="navrow">
-                <a class="navitem" href="">Friends</a>
-            </li>
-            <li class="navrow">
-                <a class="navitem" href="">Shop</a>
-            </li>
-            <li class="navrow">
-                <a class="navitem" href="{% url 'RFP:settings' %}">Settings</a>
-            </li>
-        </ul>
-    </div>
+{% extends 'RFP_templates/base.html' %}
+{% block body %}
     <div class="column-right">
         <div class="searchContainer">
             <input type="search" class="searchBar" placeholder="Add post...">
@@ -33,14 +8,16 @@
                 <button class="button" id="button" type="submit">Post</button>
             </form>
         </div>
-        {% for post in posts %}
-            <ul>
-                <li>
-                    <p>From: {{ post.from_user }}, at: {{ post.written_at }}</p>
+        {% for post in posts %} 
+            <div class="row card" style="width: 90%; margin: 20px;">
+                <div class="col-md-1" style="margin-top: 10px; margin-right: 60px;">
+                    <img class="profile-image" height="20px" width="20px" src="{{ post.image }}"/>
+                </div>
+                <div class="col-md-2 offset-md-1" style="width: 450px;">
+                    <h5>{{ post.from_user}}, {{ post.written_at }}</h5>
                     <p>{{ post.message }}</p>
-                </li>
-            </ul>   
+                </div>
+            </div>
         {% endfor %}
     </div>
-</body>
-</html>
+{% endblock %}

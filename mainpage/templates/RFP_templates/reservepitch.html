@@ -1,43 +1,22 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reserve pitch</title>
-    <link rel="stylesheet" href="{% static 'RFP_static/reservepitch.css' %}">
-</head>
-<body class="body">
-    <div class="column-left">
-        <a href="{% url 'RFP:start' %}" class="large-text">RFP</a>
-        <ul class="navbar">
-            <li class="navrow">
-                <a class="navitem active" href="{% url 'RFP:reserve_pitch' %}">Reserve a pitch</a>
-            </li>
-            <li class="navrow">
-                <a class="navitem" href="">Friends</a>
-            </li>
-            <li class="navrow">
-                <a class="navitem" href="">Shop</a>
-            </li>
-            <li class="navrow">
-                <a class="navitem" href="{% url 'RFP:settings' %}">Settings</a>
-            </li>
-        </ul>
-    </div>
+{% extends 'RFP_templates/base.html' %}
+{% block body %}
     <div class="column-right">
         {% for pitch in pitches %}
-            <ul>
-                <li>
+            <div class="row">
+                <div class="col-md-1 offset-md-1" style="margin-top: 30px; margin-right: 60px;">
+                    <img class="card" height="100px" width="100px" src="{{ pitch.image }}"/>
+                </div>
+                <div class="col-md-2" style="width: 300px; margin-top: 30px">
                     <a href="{% url 'RFP:detail' pitch.id %}">{{ pitch.name }}</a>
                     <p>{{ pitch.address }}</p>
                     <p>{{ pitch.phone_number }}</p>
-                </li>
-            </ul>
+                </div>
+            </div>
         {% endfor %}
-        <form action="{% url 'RFP:start' %}" method="get">
-            <button type="submit" class="button">Back</button>
-        </form>
+        <div class="row" style="margin-top: auto; margin-bottom: 20px; margin-left:40px">
+            <form action="{% url 'RFP:start' %}" method="get">
+                <button type="submit" class="button">Back</button>
+            </form>
+        </div> 
     </div>
-</body>
-</html>
+{% endblock %}

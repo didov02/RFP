@@ -1,0 +1,28 @@
+{% extends 'RFP_templates/base.html' %}
+{% block body %}
+    <div class="column-right">
+        <div class="searchContainer">
+            <input type="search" class="searchBar" placeholder="Search item...">
+            <form method="post" action="{% url 'RFP:add_post' %}">
+                {% csrf_token %}
+                <button class="button" id="button" type="submit" style="width: 20%">Search</button>
+            </form>
+        </div>
+        {% for item in items %} 
+        <div class="row">
+            <div class="col-md-1 offset-md-1" style="margin-top: 30px; margin-right: 60px;">
+                <img class="card" height="100px" width="100px" src="{{ item.image }}"/>
+            </div>
+            <div class="col-md-2" style="width: 300px; margin-top: 30px">
+                <p>{{ item.name }}</p>
+                <p>{{ item.price }} лв.</p>
+            </div>
+            <div class="col-md-3" style="width: 100px; margin-top: 30px">
+                <form action="{% url 'RFP:shop' %}" method="get">
+                    <button type="submit" class="button">Buy</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% endblock %}
