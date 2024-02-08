@@ -5,7 +5,8 @@
             {% csrf_token %}
             <button class="button" id="button" type="submit">Create a Post</button>
         </form>
-        {% for post in posts %} 
+        <div class="scrollable-form">
+            {% for post in posts %} 
             <div class="row card" style="width: 90%; margin: 20px;">
                 <div class="col-md-1" style="margin-top: 10px; margin-right: 60px;">
                     <img class="profile-image" height="20px" width="20px" src="{{ post.image.url }}"/>
@@ -16,5 +17,6 @@
                 </div>
             </div>
         {% endfor %}
+        </div>
     </div>
 {% endblock %}

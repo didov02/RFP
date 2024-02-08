@@ -1,7 +1,8 @@
 {% extends 'RFP_templates/base.html' %}
 {% block body %}
     <div class="column-right">
-        {% for pitch in pitches %}
+        <div class="scrollable-form">
+            {% for pitch in pitches %}
             <div class="row">
                 <div class="col-md-1 offset-md-1" style="margin-top: 30px; margin-right: 60px;">
                     <img class="card" height="100px" width="100px" src="{{ pitch.image }}"/>
@@ -13,6 +14,7 @@
                 </div>
             </div>
         {% endfor %}
+        </div>
         <div class="row" style="margin-top: auto; margin-bottom: 10px; margin-left:10px">
             <form action="{% url 'RFP:start' %}" method="get">
                 <button type="submit" class="button">Back</button>

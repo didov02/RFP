@@ -114,3 +114,8 @@ button:active {
     padding: 10px;
     box-sizing: border-box;
 }
+
+.scrollable-form {
+    max-height: 500px;
+    overflow-y: auto;
+}
