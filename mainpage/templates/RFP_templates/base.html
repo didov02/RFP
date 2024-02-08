@@ -39,25 +39,30 @@
                 <a class="nav_item" href="{% url 'RFP:shop' %}">Shop</a>
             </li>
             <li class="nav_row">
-                <a class="nav_item" href="{% url 'RFP:settings' %}">Settings</a>
-            </li>
-            <li class="nav_row">
                 <a class="nav_item" href="">Personal Info</a>
             </li>
             <li class="nav_row">
                 <a class="nav_item" href="">Change Personal Info</a>
             </li>
             <li class="nav_row">
-                <a class="nav_item" href="">Bought Items</a>
+                <a class="nav_item" href="{% url 'RFP:bought_items' %}">Bought Items</a>
             </li>
         </ul>
-        {% if user.is_authenticated %}
-            <form action="{% url 'logout' %}" method="get" style="margin-top: auto; margin-bottom: 10px; margin-left:10px; width: 100%">
-                <button type="submit" class="button">Logout</button>
-            </form>
-        {% endif %}
+        <div class="row" style="margin-top: auto; margin-bottom: 10px;">
+            <div class="col-md-1" style="width: 40%; margin-top: 30px; margin-left: 20px">
+                {% if user.is_authenticated %}
+                    <form action="{% url 'logout' %}" method="get" style="margin-top: auto; margin-bottom: 10px; margin-left:10px; width: 50%">
+                        <button type="submit" class="button">Logout</button>
+                    </form>
+                {% endif %}
+            </div>
+            <div class="col-md-2" style="width: 40%; margin-top: 60px; margin-left: auto;">
+                <div style="margin-top: auto; margin-bottom: 10px; width: 50%">
+                    <p>{{ user.profile.tokens }}T</p>
+                </div>
+            </div>
+        </div> 
     </div>
-
     <div class="alert-container">
         {% if messages %}
             {% for message in messages %}

@@ -9,6 +9,7 @@ class Profile(models.Model):
     age = models.IntegerField(default=15)
     city = models.CharField(max_length = 200, default='Unknown')
     position = models.CharField(max_length = 200, default='Unknown')
+    tokens = models.IntegerField(default=0)
 
     def __str__(self):
         return self.user.username

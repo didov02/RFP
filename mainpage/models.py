@@ -1,4 +1,6 @@
 from django.db import models
+from django.contrib.auth.models import User
+import uuid
 
 # Create your models here.
 
@@ -30,3 +32,11 @@ class Item(models.Model):
     name = models.CharField(max_length = 200)
     price = models.IntegerField()
     image = models.CharField(max_length = 500, default="https://c1.wallpaperflare.com/preview/305/482/405/music-grocer-grocery-store-sales-stand.jpg")
+
+class BoughtItem(models.Model):
+    item_name = models.ForeignKey(Item, on_delete=models.SET_NULL, null=True)
+    item_code = models.CharField(max_length=10, unique=True, default=uuid.uuid4().hex[:6].upper())
+    bought_from = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, default=1)
+
+    def __str__(self):
+        return f"{self.item_name} - {self.item_code}"

@@ -1,0 +1,18 @@
+{% extends 'RFP_templates/base.html' %}
+{% block body %}
+    <div class="column-right">
+        <div class="scrollable-form">
+            {% for bought_item in bought_items %}
+                <div class="row">
+                    <div class="col-md-1 offset-md-1" style="margin-top: 30px; margin-right: 60px;">
+                        <img class="card" height="100px" width="100px" src="{{ bought_item.item_name.image }}"/>
+                    </div>
+                    <div class="col-md-2" style="width: 300px; margin-top: 30px">
+                        <p>{{ bought_item.item_name.name }}</p>
+                        <p>{{ bought_item.item_code }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

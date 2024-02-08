@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .models import Post, Item, Pitch
+from .models import Post, Item, Pitch, BoughtItem
 from django.template import loader
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.core.exceptions import ObjectDoesNotExist
 from .forms import PostForm
+from .additional_functions import generate_random_code
 
 # Create your views here.
 @login_required
@@ -97,3 +98,31 @@ def add_post(request):
         print('Form not valid. Errors:', form.errors)
     
     return render(request, 'RFP_templates/addpost.html', {'form': form})
+
+@login_required
+def buy_item(request, id):
+    item = Item.objects.get(pk=id)
+    
+    if request.user.profile.tokens > 0:
+        request.user.profile.tokens -= 1
+        request.user.profile.save()
+
+    BoughtItem.objects.create(
+        item_name=item,
+        item_code = generate_random_code(),
+        bought_from=request.user
+    )
+
+    return redirect('RFP:bought_items')
+
+@login_required
+def bought_items(request):
+    bought_items = BoughtItem.objects.filter(bought_from=request.user)
+    return render(request, 'RFP_templates/boughtitems.html', {'bought_items': bought_items})
+
+@login_required
+def see_reserved_pitches(request):
+    request.user.profile.tokens = request.user.profile.tokens + 1
+    request.user.profile.save()
+
+    return redirect('RFP:start')
