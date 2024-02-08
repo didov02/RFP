@@ -10,5 +10,5 @@ urlpatterns = [
     path('friends/addfriend/', views.add_friend, name = 'add_friend'),
     path('shop/', views.shop, name = 'shop'),
     path('settings/', views.settings, name = 'settings'),
-    path('add_data/', views.add_post, name='add_post'),
+    path('addpost/', views.add_post, name='add_post'),
 ]

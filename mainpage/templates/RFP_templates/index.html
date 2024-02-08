@@ -1,17 +1,14 @@
 {% extends 'RFP_templates/base.html' %}
 {% block body %}
     <div class="column-right">
-        <div class="searchContainer">
-            <input type="search" class="searchBar" placeholder="Add post...">
-            <form method="post" action="{% url 'RFP:add_post' %}">
-                {% csrf_token %}
-                <button class="button" id="button" type="submit">Post</button>
-            </form>
-        </div>
+        <form method="post" action="{% url 'RFP:add_post' %}">
+            {% csrf_token %}
+            <button class="button" id="button" type="submit">Create a Post</button>
+        </form>
         {% for post in posts %} 
             <div class="row card" style="width: 90%; margin: 20px;">
                 <div class="col-md-1" style="margin-top: 10px; margin-right: 60px;">
-                    <img class="profile-image" height="20px" width="20px" src="{{ post.image }}"/>
+                    <img class="profile-image" height="20px" width="20px" src="{{ post.image.url }}"/>
                 </div>
                 <div class="col-md-2 offset-md-1" style="width: 450px;">
                     <h5>{{ post.from_user}}, {{ post.written_at }}</h5>

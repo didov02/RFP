@@ -8,9 +8,9 @@ class Post(models.Model):
         return self.from_user
     
     from_user = models.CharField(max_length = 200)
-    written_at = models.TimeField()
+    written_at = models.DateTimeField()
     message = models.CharField(max_length = 500)
-    image = models.CharField(max_length = 500, default = "https://static.vecteezy.com/system/resources/previews/007/319/933/original/black-avatar-person-icons-user-profile-icon-vector.jpg")
+    image = models.ImageField()
 
 class Pitch(models.Model):
 

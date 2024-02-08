@@ -15,10 +15,17 @@
             <div class="col">
                 <a href="{% url 'RFP:start' %}" class="large-text">RFP</a>
             </div>
-            <div class="col text-right" style="margin-top: 40px; margin-left:150px">
-                {% if user.is_authenticated %}
-                    <span class="username" style="font-size: 1.5em;">{{ user.username }}</span>
-                {% endif %}
+            <div class="col">
+                <div class="row">
+                    <div class="col" style="margin-top: 40px; width:100%">
+                        {% if user.is_authenticated %}
+                            <span class="username" style="font-size: 1.5em; margin-left:50px">{{ user.username }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="col text-right" style="margin-top: 40px;">
+                        <img src="{{ user.profile.image.url }}" class="profile-image">
+                    </div>
+                </div>
             </div>
         </div>
         <ul class="nav_bar">

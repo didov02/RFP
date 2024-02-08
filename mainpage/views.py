@@ -3,6 +3,9 @@ from django.http import HttpResponse
 from .models import Post, Item, Pitch
 from django.template import loader
 from django.contrib.auth.decorators import login_required
+from django.utils import timezone
+from django.core.exceptions import ObjectDoesNotExist
+from .forms import PostForm
 
 # Create your views here.
 @login_required
@@ -81,13 +84,16 @@ def detail(request, id):
 
 @login_required
 def add_post(request):
-    if request.method == 'POST':
-        from_user = request.POST.get('from_user')
-        written_at = request.POST.get('written_at')
-        message = request.POST.get('message')
+    form = PostForm(request.POST or None)
 
-        Post.objects.create(from_user=from_user, written_at=written_at, message=message)
-
-        return redirect('RFP_templates/index.html')
+    if form.is_valid():
+        post = form.save(commit=False) 
+        post.from_user = request.user.username
+        post.written_at = timezone.now()
+        post.image = request.user.profile.image
+        post.save()
+        return redirect('RFP:start')
     else:
-        return render(request, 'RFP_templates/index.html')
+        print('Form not valid. Errors:', form.errors)
+    
+    return render(request, 'RFP_templates/addpost.html', {'form': form})
