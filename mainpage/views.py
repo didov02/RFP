@@ -1,14 +1,13 @@
-from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import Post, Item, Pitch, BoughtItem
-from django.template import loader
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
-from django.core.exceptions import ObjectDoesNotExist
 from .forms import PostForm
 from .additional_functions import generate_random_code
 from django.contrib.auth.models import User
 from users.forms import ProfileForm
+from users.models import Profile
+from users.models import FriendRequest
 
 # Create your views here.
 @login_required
@@ -19,7 +18,7 @@ def start(request):
     }
 
     if request.user.is_authenticated:
-        context.update({'username': request.user.username})
+        context['username'] = request.user.username
 
     return render(request, 'RFP_templates/index.html', context)
 
@@ -31,24 +30,83 @@ def reserve_pitch(request):
     }
 
     if request.user.is_authenticated:
-        context.update({'username': request.user.username})
+        context['username'] = request.user.username
 
     return render(request, 'RFP_templates/reservepitch.html', context)
 
 @login_required
 def friends(request):
-    context = {
-
-    }
+    context = {}
 
     if request.user.is_authenticated:
-        context.update({'username': request.user.username})
+        context['username'] = request.user.username
 
     return render(request, 'RFP_templates/friends.html', context)
 
 @login_required
-def add_friend(request):
-    return HttpResponse('Here you can add friends')
+def send_requests(request):
+    current_user = request.user
+    current_user_profile = Profile.objects.get(user=current_user)
+
+    all_users = User.objects.exclude(pk=current_user.id)
+    
+    users_not_friends = []
+
+    for user in all_users:
+        if user.profile not in current_user_profile.friends.all():
+            users_not_friends.append(user)
+
+    return render(request, 'RFP_templates/sendrequest.html', {'not_friends': users_not_friends})
+
+@login_required
+def send_request(request, id):
+    current_user = request.user
+    sender= current_user
+    receiver=User.objects.get(pk=id)
+
+    friend_request = FriendRequest.objects.create(
+        sender=sender,
+        receiver=receiver,
+    )
+
+    receiver_profile = Profile.objects.get(user=receiver)
+    receiver_profile.received_friend_requests.add(friend_request)
+
+    current_user_profile = Profile.objects.get(user=current_user)
+
+    all_users = User.objects.exclude(pk=current_user.id).exclude(pk=id)
+    
+    users_not_friends = []
+
+    for user in all_users:
+        if user.profile not in current_user_profile.friends.all():
+            users_not_friends.append(user)
+
+    return render(request, 'RFP_templates/sendrequest.html', {'not_friends':users_not_friends})
+
+@login_required
+def see_friends_request(request):
+    friend_requests = request.user.profile.received_friend_requests.all()
+
+    senders = []
+
+    for friend_request in friend_requests:
+        senders.append(friend_request.sender)
+
+    return render(request, 'RFP_templates/seefriendrequests.html', {'senders': senders})
+
+@login_required
+def accept_request(request, id):
+    current_user = request.user
+    sender = User.objects.get(pk=id)
+
+    friend_request = get_object_or_404(FriendRequest, id=id, receiver=current_user)
+    friend_request.delete()
+
+    current_user.profile.friends.add(sender.profile)
+    
+    return redirect('RFP:friends')
+    
 
 @login_required
 def shop(request):
@@ -58,18 +116,17 @@ def shop(request):
     }
 
     if request.user.is_authenticated:
-        context.update({'username': request.user.username})
+        context['username'] = request.user.username
 
     return render(request, 'RFP_templates/shop.html', context)
 
 @login_required
 def settings(request):
-    context = {
-
-    }
+    context = {}
 
     if request.user.is_authenticated:
-        context.update({'username': request.user.username, 'email': request.user.email})
+        context['username'] = request.user.username
+        context['email'] = request.user.email
 
     return render(request, 'RFP_templates/settings.html', context) 
 
@@ -81,7 +138,7 @@ def detail(request, id):
     }
 
     if request.user.is_authenticated:
-        context.update({'username': request.user.username})
+        context['username'] = request.user.username
 
     return render(request, 'RFP_templates/detail.html', context)
 
@@ -132,7 +189,7 @@ def see_reserved_pitches(request):
 @login_required
 def personal_info(request, id):
     user = User.objects.get(pk=id)
-    return render(request, 'RFP_templates/personalinfo.html', {'user':user})
+    return render(request, 'RFP_templates/personalinfo.html', {'user' : user})
 
 @login_required
 def change_info(request):
@@ -156,4 +213,11 @@ def change_info(request):
         })
 
     return render(request, 'RFP_templates/changepersonalinfo.html', {'form': form})
+
+@login_required
+def view_friends(request):
+    current_user = request.user
+    friends_list = current_user.profile.friends.all()
+
+    return render(request, 'RFP_templates/viewfriends.html', {'friends_list': friends_list})
     
