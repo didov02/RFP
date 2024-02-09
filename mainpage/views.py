@@ -7,6 +7,8 @@ from django.utils import timezone
 from django.core.exceptions import ObjectDoesNotExist
 from .forms import PostForm
 from .additional_functions import generate_random_code
+from django.contrib.auth.models import User
+from users.forms import ProfileForm
 
 # Create your views here.
 @login_required
@@ -126,3 +128,32 @@ def see_reserved_pitches(request):
     request.user.profile.save()
 
     return redirect('RFP:start')
+
+@login_required
+def personal_info(request, id):
+    user = User.objects.get(pk=id)
+    return render(request, 'RFP_templates/personalinfo.html', {'user':user})
+
+@login_required
+def change_info(request):
+    user_profile = request.user.profile
+
+    if request.method == 'POST':
+        form = ProfileForm(request.POST or None)
+        if form.is_valid():
+            user_profile.age = form.cleaned_data['age']
+            user_profile.city = form.cleaned_data['city']
+            user_profile.position = form.cleaned_data['position']
+            user_profile.image = form.cleaned_data['image']
+            user_profile.save()
+            return redirect('RFP:start')
+    else:
+        form = ProfileForm(initial={
+            'age': user_profile.age,
+            'city': user_profile.city,
+            'position': user_profile.position,
+            'image': user_profile.image,
+        })
+
+    return render(request, 'RFP_templates/changepersonalinfo.html', {'form': form})
+    

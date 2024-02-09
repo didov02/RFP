@@ -1,0 +1,20 @@
+{% extends 'RFP_templates/base.html' %}
+{% block body %}
+    <div class="column-right">
+        <form method="post" enctype="multipart/form-data" style="text-align: start; margin: auto;">
+            {% csrf_token %}
+            {% for field in form %}
+                <div style="margin-bottom: 40px;">
+                    {{ field.label_tag }}
+                    {{ field }}
+                </div>
+            {% endfor %}
+            <button type="submit" class="button">Save Changes</button>
+        </form>
+        <div class="row" style="margin-top: auto; margin-bottom: 10px; margin-left: 10px;">
+            <form action="{% url 'RFP:start' %}" method="get">
+                <button type="submit" class="button">Back</button>
+            </form>
+        </div> 
+    </div>
+{% endblock %}
