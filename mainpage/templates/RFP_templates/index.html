@@ -12,7 +12,8 @@
                     <img class="profile-image" height="20px" width="20px" src="{{ post.image.url }}"/>
                 </div>
                 <div class="col-md-2 offset-md-1" style="width: 450px;">
-                    <h5>{{ post.from_user}}, {{ post.written_at }}</h5>
+                    <a href="{% url 'RFP:personal_info'  %}" class="username" style="font-size: 1.5em; margin-left:50px; text-decoration: none; color: inherit;">{{ post.from_user }}</a>
+                    <p>{{ post.written_at }}</p>
                     <p>{{ post.message }}</p>
                 </div>
             </div>

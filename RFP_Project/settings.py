@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'friend.apps.FriendConfig',
     'users.apps.UsersConfig',
     'mainpage.apps.MainpageConfig',
     'django.contrib.admin',
