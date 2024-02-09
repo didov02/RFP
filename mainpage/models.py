@@ -9,7 +9,7 @@ class Post(models.Model):
     def __str__(self):
         return self.from_user
     
-    from_user = models.CharField(max_length = 200)
+    from_user = models.CharField(max_length = 200, default='unknown')
     written_at = models.DateTimeField()
     message = models.CharField(max_length = 500)
     image = models.ImageField()

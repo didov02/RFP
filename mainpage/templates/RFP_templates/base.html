@@ -19,7 +19,7 @@
                 <div class="row">
                     <div class="col" style="margin-top: 40px; width:100%">
                         {% if user.is_authenticated %}
-                            <span class="username" style="font-size: 1.5em; margin-left:50px">{{ user.username }}</span>
+                            <a href="{% url 'RFP:personal_info' user.id %}" class="username" style="font-size: 1.5em; margin-left:50px; text-decoration: none; color: inherit;">{{ user.username }}</a>
                         {% endif %}
                     </div>
                     <div class="col text-right" style="margin-top: 40px;">
@@ -46,6 +46,9 @@
             </li>
             <li class="nav_row">
                 <a class="nav_item" href="{% url 'RFP:bought_items' %}">Bought Items</a>
+            </li>
+            <li class="nav_row">
+                <a class="nav_item" href="">Reservations</a>
             </li>
         </ul>
         <div class="row" style="margin-top: auto; margin-bottom: 10px;">
