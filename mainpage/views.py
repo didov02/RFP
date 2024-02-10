@@ -47,13 +47,19 @@ def friends(request):
 def send_requests(request):
     current_user = request.user
     current_user_profile = Profile.objects.get(user=current_user)
+    friend_requests = request.user.profile.received_friend_requests.all()
+
+    senders = []
+
+    for friend_request in friend_requests:
+        senders.append(friend_request.sender)
 
     all_users = User.objects.exclude(pk=current_user.id)
     
     users_not_friends = []
 
     for user in all_users:
-        if user.profile not in current_user_profile.friends.all():
+        if user.profile not in current_user_profile.friends.all() and user not in senders:
             users_not_friends.append(user)
 
     return render(request, 'RFP_templates/sendrequest.html', {'not_friends': users_not_friends})
@@ -161,16 +167,17 @@ def add_post(request):
 @login_required
 def buy_item(request, id):
     item = Item.objects.get(pk=id)
+    item_price = int(request.GET['price'])
     
-    if request.user.profile.tokens > 0:
-        request.user.profile.tokens -= 1
+    if request.user.profile.tokens - item_price >= 0:
+        request.user.profile.tokens -= item_price
         request.user.profile.save()
 
-    BoughtItem.objects.create(
-        item_name=item,
-        item_code = generate_random_code(),
-        bought_from=request.user
-    )
+        BoughtItem.objects.create(
+            item_name=item,
+            item_code = generate_random_code(),
+            bought_from=request.user
+        )
 
     return redirect('RFP:bought_items')
 

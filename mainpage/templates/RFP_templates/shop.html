@@ -16,10 +16,12 @@
                     </div>
                     <div class="col-md-2" style="width: 300px; margin-top: 30px">
                         <p>{{ item.name }}</p>
-                        <p>{{ item.price }} лв.</p>
+                        <p>{{ item.price }} T</p>
                     </div>
                     <div class="col-md-3" style="width: 100px; margin-top: 30px">
-                        <form action="{% url 'RFP:buy_item' item.id %}" method="get">
+                        <form action="{% url 'RFP:buy_item' item.id%}" method="get">
+                            {% csrf_token %}
+                            <input type="hidden" name="price" value="{{ item.price }}">
                             <button type="submit" class="button">Buy</button>
                         </form>
                     </div>
