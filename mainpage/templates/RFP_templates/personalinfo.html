@@ -2,19 +2,19 @@
 {% block body %}
     <div class="column-right">
         <div style="margin-top: 60px; margin-right: 60px; margin-left: 50px; margin-bottom: 20px;">
-            <img src="{{ user.profile.image.url }}" class="card" height="200px" width="200px">
+            <img src="{{ shown_user.profile.image.url }}" class="card" height="200px" width="200px">
         </div>
         <div class="row" style="margin-bottom: 20px;">
-            <span style="font-size: 1.5em; margin-left: 50px;">Username: {{ user.username }}</span>
+            <span style="font-size: 1.5em; margin-left: 50px;">Username: {{ shown_user.username }}</span>
         </div>
         <div class="row" style="margin-bottom: 20px;">
-            <span style="font-size: 1.5em; margin-left: 50px;">Age: {{ user.profile.age }}</span>
+            <span style="font-size: 1.5em; margin-left: 50px;">Age: {{ shown_user.profile.age }}</span>
         </div>
         <div class="row" style="margin-bottom: 20px;">
-            <span style="font-size: 1.5em; margin-left: 50px;">City: {{ user.profile.city }}</span>
+            <span style="font-size: 1.5em; margin-left: 50px;">City: {{ shown_user.profile.city }}</span>
         </div>
         <div class="row" style="margin-bottom: 20px;">
-            <span style="font-size: 1.5em; margin-left: 50px;">Position: {{ user.profile.position }}</span>
+            <span style="font-size: 1.5em; margin-left: 50px;">Position: {{ shown_user.profile.position }}</span>
         </div>
         <div class="row" style="margin-top: auto; margin-bottom: 10px; margin-left: 10px;">
             <form action="{% url 'RFP:start' %}" method="get">

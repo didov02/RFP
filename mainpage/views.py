@@ -92,11 +92,18 @@ def send_request(request, id):
     current_user_profile = Profile.objects.get(user=current_user)
 
     all_users = User.objects.exclude(pk=current_user.id).exclude(pk=id)
+
+    friend_requests = request.user.profile.received_friend_requests.all()
+
+    senders = []
+
+    for friend_request in friend_requests:
+        senders.append(friend_request.sender)
     
     users_not_friends = []
 
     for user in all_users:
-        if user.profile not in current_user_profile.friends.all():
+        if user.profile not in current_user_profile.friends.all() and user not in senders:
             users_not_friends.append(user)
 
     return render(request, 'RFP_templates/sendrequest.html', {'not_friends':users_not_friends})
@@ -117,7 +124,7 @@ def accept_request(request, id):
     current_user = request.user
     sender = User.objects.get(pk=id)
 
-    friend_request = get_object_or_404(FriendRequest, id=id, receiver=current_user)
+    friend_request = FriendRequest.objects.filter(sender = sender, receiver = request.user)
     friend_request.delete()
 
     current_user.profile.friends.add(sender.profile)
@@ -131,9 +138,6 @@ def shop(request):
     context = {
         'items' : items
     }
-
-    if request.user.is_authenticated:
-        context['username'] = request.user.username
 
     return render(request, 'RFP_templates/shop.html', context)
 
@@ -230,8 +234,8 @@ def see_reserved_pitches(request):
 
 @login_required
 def personal_info(request, id):
-    user = User.objects.get(pk=id)
-    return render(request, 'RFP_templates/personalinfo.html', {'user' : user})
+    show_user = User.objects.get(pk=id)
+    return render(request, 'RFP_templates/personalinfo.html', {'shown_user' : show_user})
 
 @login_required
 def change_info(request):
@@ -263,3 +267,30 @@ def view_friends(request):
 
     return render(request, 'RFP_templates/viewfriends.html', {'friends_list': friends_list})
     
+@login_required
+def search_items(request):
+    searched_item_name = request.GET.get('input_item')
+    items = Item.objects.all()
+    items_names = [item.name for item in items]
+
+    if searched_item_name in items_names:
+        searched_items = Item.objects.filter(name=searched_item_name)
+        items = list(searched_items)
+    else:
+        items = Item.objects.all()
+
+    return render(request, 'RFP_templates/shop.html', {'items': items})
+
+@login_required
+def search_pitch(request):
+    searched_pitch_name = request.GET.get('input_pitch')
+    pitches = Pitch.objects.all()
+    pitches_names = [pitch.name for pitch in  pitches]
+
+    if searched_pitch_name in pitches_names:
+        searched_pitches = Pitch.objects.filter(name=searched_pitch_name)
+        pitches = list(searched_pitches)
+    else:
+        pitches = Pitch.objects.all()
+
+    return render(request, 'RFP_templates/reservepitch.html', {'pitches' : pitches})

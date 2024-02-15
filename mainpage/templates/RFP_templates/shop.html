@@ -1,13 +1,11 @@
 {% extends 'RFP_templates/base.html' %}
 {% block body %}
     <div class="column-right">
-        <div class="searchContainer">
-            <input type="search" class="searchBar" placeholder="Search item...">
-            <form method="post" action="">
-                {% csrf_token %}
-                <button class="button" id="button" type="submit" style="width: 20%">Search</button>
-            </form>
-        </div>
+        <form action="{% url 'RFP:search_items' %}" method="get">
+            {% csrf_token %}
+            <input type="text" name="input_item"  class="searchBar" placeholder="Search Item..">
+            <button class="button" id="searchButton" style="width: 20%">Search</button>
+        </form>
         <div class="scrollable-form">
             {% for item in items %} 
                 <div class="row">
@@ -19,7 +17,7 @@
                         <p>{{ item.price }} T</p>
                     </div>
                     <div class="col-md-3" style="width: 100px; margin-top: 30px">
-                        <form action="{% url 'RFP:buy_item' item.id%}" method="get">
+                        <form action="{% url 'RFP:buy_item' item.id %}" method="get">
                             {% csrf_token %}
                             <input type="hidden" name="price" value="{{ item.price }}">
                             <button type="submit" class="button">Buy</button>

@@ -21,4 +21,6 @@ urlpatterns = [
     path('friends/acceptrequest/<int:id>', views.accept_request, name='accept_request'),
     path('friends/sendrequests/<int:id>', views.send_request, name='send_request'),
     path('friends/seefriendrequests/', views.see_friends_request, name='see_friends_request'),
+    path('searchitem/', views.search_items, name='search_items'),
+    path('searchpitch/', views.search_pitch, name='search_pitch'),
 ]
