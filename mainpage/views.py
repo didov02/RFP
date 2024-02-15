@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Post, Item, Pitch, BoughtItem
+from .models import Post, Item, Pitch, BoughtItem, Reservation
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
-from .forms import PostForm
+from .forms import PostForm, ReservationForm
 from .additional_functions import generate_random_code
 from django.contrib.auth.models import User
 from users.forms import ProfileForm
@@ -13,12 +13,23 @@ from users.models import FriendRequest
 @login_required
 def start(request):
     posts = Post.objects.all()
-    context = {
-        'posts':posts,
-    }
+    context = {}
+    current_user = request.user
 
     if request.user.is_authenticated:
-        context['username'] = request.user.username
+        context['username'] = current_user.username
+
+    friends = current_user.profile.friends.all()
+    friends_usernames = [friend.user.username for friend in friends]
+    posts_from_friends = []
+
+    for post in posts:
+        if post.from_user == current_user.username or post.from_user in friends_usernames:
+            posts_from_friends.append(post)
+
+    posts_from_friends = sorted(posts_from_friends, key=lambda x: x.written_at, reverse=True)
+
+    context['posts'] = posts_from_friends
 
     return render(request, 'RFP_templates/index.html', context)
 
@@ -149,6 +160,32 @@ def detail(request, id):
     return render(request, 'RFP_templates/detail.html', context)
 
 @login_required
+def make_reservation(request, id):
+    current_pitch = Pitch.objects.get(pk=id)
+    form = ReservationForm(request.POST or None)
+
+    if form.is_valid():
+        reservation = form.save(commit=False)
+        reservation.made_by = request.user
+        reservation.pitch = current_pitch
+        reservation.reservation_code = generate_random_code()
+
+        if Reservation.objects.filter(pitch=current_pitch, datetime=reservation.datetime).exists():
+            form.add_error(None, 'There is already a reservation for this pitch at the selected datetime.')
+            print('Form not valid. Errors: ', form.errors)
+            return render(request, 'RFP_templates/makereservation.html', {'form': form})
+        
+        request.user.profile.tokens = request.user.profile.tokens + 1
+        request.user.profile.save()
+        
+        reservation.save()
+        return redirect('RFP:start')
+    else:
+        print('Form not valid. Errors: ', form.errors)
+
+    return render(request, 'RFP_templates/makereservation.html', {'form':form})
+
+@login_required
 def add_post(request):
     form = PostForm(request.POST or None)
 
@@ -160,7 +197,7 @@ def add_post(request):
         post.save()
         return redirect('RFP:start')
     else:
-        print('Form not valid. Errors:', form.errors)
+        print('Form not valid. Errors: ', form.errors)
     
     return render(request, 'RFP_templates/addpost.html', {'form': form})
 
@@ -188,10 +225,8 @@ def bought_items(request):
 
 @login_required
 def see_reserved_pitches(request):
-    request.user.profile.tokens = request.user.profile.tokens + 1
-    request.user.profile.save()
-
-    return redirect('RFP:start')
+    reservations = Reservation.objects.filter(made_by = request.user)
+    return render(request, 'RFP_templates/reservations.html', {'reservations':reservations})
 
 @login_required
 def personal_info(request, id):

@@ -20,8 +20,9 @@
             </form>        
        </div> 
        <div class="col-md-2" style="width: 40%; margin-top: 30px; margin-left: auto;">
-            <form action="{% url 'RFP:see_reserved_pitches' %}" method="get">
-                <button type="submit" class="button">Reserve</button>
+            <form method="post" action="{% url 'RFP:make_reservation' pitch.id %}">
+                {% csrf_token %}
+                <button class="button" id="button" type="submit">Reserve</button>
             </form>
         </div>
     </div>

@@ -1,0 +1,26 @@
+{% extends 'RFP_templates/base.html' %}
+{% block body %}
+    <style>
+        .card-style {
+            width: 80%; 
+            margin-left: 50px;
+            margin-top: 20px;
+        }
+    </style>
+    <div class="column-right">
+        <div class="scrollable-form">
+            {% for reservation in reservations %}
+                <div class="card card-style row">
+                    <div class="col-md-1 offset-md-1" style="width: 40%; margin-top: 30px; margin-right: 60px;">
+                        <img class="card" height="100px" width="100px" src="{{ reservation.pitch.image }}"/>
+                    </div>
+                    <div class="col-md-5" style="width: 60%; margin-top: 30px">
+                        <p>{{ reservation.pitch.name }}</p>
+                        <p>{{ reservation.datetime }}</p>
+                        <p>{{ reservation.reservation_code }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

@@ -5,6 +5,7 @@ app_name = 'RFP'
 urlpatterns = [
     path('', views.start, name = 'start'),
     path('reservepitch/', views.reserve_pitch, name = 'reserve_pitch'),
+    path('reservepitch/<int:id>', views.make_reservation, name='make_reservation'),
     path('<int:id>/', views.detail, name='detail'),
     path('friends/', views.friends, name = 'friends'),
     path('shop/', views.shop, name = 'shop'),
