@@ -25,4 +25,8 @@ urlpatterns = [
     path('seeparticipants/<int:id>/', views.see_participants, name='see_participants'),
     path('setcode/', views.set_code, name='set_code'),
     path('joingame/', views.join_game, name='join_game'),
+    path('deletereservation/<int:id>/', views.delete_reservation, name='delete_reservation'),
+    path('searchboughtitem/', views.search_bought_items, name='search_bought_items'),
+    path('deletepost/<int:id>', views.delete_post, name='delete_post'),
+    path('deleteitem/<int:id>', views.delete_item, name='delete_item'),
 ]

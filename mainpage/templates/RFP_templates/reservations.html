@@ -19,6 +19,13 @@
                         <p>{{ reservation.datetime }}</p>
                         <p>{{ reservation.reservation_code }}</p>
                     </div>
+                    {% if reservation.made_by == user %}
+                    <div class="col-md-6" style="margin-top: auto; margin-bottom: 10px; margin-left:10px">
+                        <form action="{% url 'RFP:delete_reservation' reservation.id %}" method="get">
+                            <button type="submit" class="button">Delete</button>
+                        </form>
+                    </div>
+                    {% endif %}
                 </div>
             {% endfor %}
         </div>

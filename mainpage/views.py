@@ -17,7 +17,7 @@ def start(request):
     current_user = request.user
 
     if request.user.is_authenticated:
-        context['username'] = current_user.username
+        context['user'] = current_user
 
     friends = current_user.profile.friends.all()
     friends_usernames = [friend.user.username for friend in friends]
@@ -74,7 +74,7 @@ def send_requests(request):
             receiver=checking_user
         ).exists()
 
-        if not friend_request_exists and not reverse_friend_request_exists:
+        if not friend_request_exists and not reverse_friend_request_exists and checking_user.profile not in current_user_profile.friends.all():
             users_not_friends.append(checking_user)
 
     return render(request, 'RFP_templates/sendrequest.html', {'not_friends': users_not_friends})
@@ -110,7 +110,7 @@ def send_request(request, id):
             receiver=checking_user
         ).exists()
 
-        if not friend_request_exists and not reverse_friend_request_exists:
+        if not friend_request_exists and not reverse_friend_request_exists and checking_user.profile not in current_user_profile.friends.all():
             users_not_friends.append(checking_user)
 
     return render(request, 'RFP_templates/sendrequest.html', {'not_friends':users_not_friends})
@@ -230,7 +230,7 @@ def see_reserved_pitches(request):
         if request.user in reservation.participants.all() or request.user == reservation.made_by:
             current_reservations.append(reservation)
     
-    return render(request, 'RFP_templates/reservations.html', {'reservations':current_reservations})
+    return render(request, 'RFP_templates/reservations.html', {'reservations':current_reservations, 'user':request.user})
 
 @login_required
 def personal_info(request, id):
@@ -277,6 +277,20 @@ def search_items(request):
     return render(request, 'RFP_templates/shop.html', {'items': items})
 
 @login_required
+def search_bought_items(request):
+    searched_item_name = request.GET.get('input_item')
+    items = BoughtItem.objects.filter(bought_from = request.user)
+    items_names = [item.item_name.name for item in items]
+
+    if searched_item_name in items_names:
+        searched_items = items.filter(item_name__name=searched_item_name)
+        items = list(searched_items)
+    else:
+        items = BoughtItem.objects.all()
+
+    return render(request, 'RFP_templates/boughtitems.html', {'bought_items': items})
+
+@login_required
 def search_pitch(request):
     searched_pitch_name = request.GET.get('input_pitch')
     pitches = Pitch.objects.all()
@@ -319,3 +333,26 @@ def join_game(request):
             current_reservations.append(reservation)
     
     return render(request, 'RFP_templates/reservations.html', {'reservations':current_reservations})
+
+@login_required
+def delete_reservation(request, id):
+    reservation = Reservation.objects.get(pk = id)
+    reservation.delete()
+
+    return redirect('RFP:start')
+
+@login_required
+def delete_post(request, id):
+    post = Post.objects.get(pk = id)
+    post.delete()
+
+    return redirect('RFP:start')
+
+@login_required
+def delete_item(request, id):
+    item = BoughtItem.objects.get(pk = id)
+    request.user.profile.tokens += int(item.item_name.price)
+    request.user.profile.save()
+    item.delete()
+
+    return redirect('RFP:start')
