@@ -57,21 +57,25 @@ def friends(request):
 @login_required
 def send_requests(request):
     current_user = request.user
-    current_user_profile = Profile.objects.get(user=current_user)
-    friend_requests = request.user.profile.received_friend_requests.all()
-
-    senders = []
-
-    for friend_request in friend_requests:
-        senders.append(friend_request.sender)
+    current_user_profile = request.user.profile
 
     all_users = User.objects.exclude(pk=current_user.id)
-    
+
     users_not_friends = []
 
-    for user in all_users:
-        if user.profile not in current_user_profile.friends.all() and user not in senders:
-            users_not_friends.append(user)
+    for checking_user in all_users:
+        friend_request_exists = FriendRequest.objects.filter(
+            sender=checking_user,
+            receiver=current_user
+        ).exists()
+
+        reverse_friend_request_exists = FriendRequest.objects.filter(
+            sender=current_user,
+            receiver=checking_user
+        ).exists()
+
+        if not friend_request_exists and not reverse_friend_request_exists:
+            users_not_friends.append(checking_user)
 
     return render(request, 'RFP_templates/sendrequest.html', {'not_friends': users_not_friends})
 
@@ -93,18 +97,21 @@ def send_request(request, id):
 
     all_users = User.objects.exclude(pk=current_user.id).exclude(pk=id)
 
-    friend_requests = request.user.profile.received_friend_requests.all()
-
-    senders = []
-
-    for friend_request in friend_requests:
-        senders.append(friend_request.sender)
-    
     users_not_friends = []
 
-    for user in all_users:
-        if user.profile not in current_user_profile.friends.all() and user not in senders:
-            users_not_friends.append(user)
+    for checking_user in all_users:
+        friend_request_exists = FriendRequest.objects.filter(
+            sender=checking_user,
+            receiver=current_user
+        ).exists()
+
+        reverse_friend_request_exists = FriendRequest.objects.filter(
+            sender=current_user,
+            receiver=checking_user
+        ).exists()
+
+        if not friend_request_exists and not reverse_friend_request_exists:
+            users_not_friends.append(checking_user)
 
     return render(request, 'RFP_templates/sendrequest.html', {'not_friends':users_not_friends})
 
@@ -235,7 +242,7 @@ def change_info(request):
     user_profile = request.user.profile
 
     if request.method == 'POST':
-        form = ProfileForm(request.POST or None)
+        form = ProfileForm(request.POST, request.FILES)
         if form.is_valid():
             user_profile.age = form.cleaned_data['age']
             user_profile.city = form.cleaned_data['city']
@@ -244,12 +251,7 @@ def change_info(request):
             user_profile.save()
             return redirect('RFP:start')
     else:
-        form = ProfileForm(initial={
-            'age': user_profile.age,
-            'city': user_profile.city,
-            'position': user_profile.position,
-            'image': user_profile.image,
-        })
+        form = ProfileForm(instance=user_profile)
 
     return render(request, 'RFP_templates/changepersonalinfo.html', {'form': form})
 

@@ -15,3 +15,5 @@ class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ['age', 'city', 'position', 'image']
+
+    image = forms.ImageField(required=False)
