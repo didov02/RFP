@@ -2,8 +2,17 @@
 {% block body %}
 <style>
     .button-link {
-    text-decoration: none;
-    background-color: lightgreen;
+        text-decoration: none;
+        padding: 10px;
+        background-color: lightgreen;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        width: auto;
+        margin-top: 20px;
+        margin-left: 20px;
+        margin-bottom: 30px;
     }
 
     .button-link:hover {
@@ -29,18 +38,18 @@
     </div>
     <form method="POST" style="text-align:start; margin: auto;">
         {% csrf_token %}
-        <label for="{{ form.datetime.id_for_label }}" style="margin-right: 10px">Date and Time:</label>
+        <label for="{{ form.datetime.id_for_label }}" style="margin-left: 150px">Date and Time:</label>
         <br>
-        <div>
+        <div style="margin-left: 150px;">
             {{ form.datetime }}
         </div>
         <br>
         <div class="row" style="margin-top: auto; margin-bottom: 20px;">
-            <div class="col-md-1" style="width: 40%; margin-top: 30px; margin-left: 20px">
+            <div class="col-md-1" style="margin-top: 60px; margin-right: 80px;">
                 <a href="{% url 'RFP:reserve_pitch' %}" class="button button-link">Back</a>
             </div>
-            <div class="col-md-2" style="width: 40%; margin-top: 30px; margin-left: auto;">
-                <button type="submit" class="button">Create Reservation</button>
+            <div class="col-md-2" style="margin-top: 30px; margin-left: auto; margin-right: 150px;">
+                <button type="submit" class="button" style="width: 200px">Create Reservation</button>
             </div>
         </div>
     </form>
