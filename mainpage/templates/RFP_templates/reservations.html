@@ -15,12 +15,17 @@
                         <img class="card" height="100px" width="100px" src="{{ reservation.pitch.image }}"/>
                     </div>
                     <div class="col-md-5" style="width: 60%; margin-top: 30px">
-                        <p>{{ reservation.pitch.name }}</p>
+                        <a href="{% url 'RFP:see_participants' reservation.id %}">{{ reservation.pitch.name }}</a>
                         <p>{{ reservation.datetime }}</p>
                         <p>{{ reservation.reservation_code }}</p>
                     </div>
                 </div>
             {% endfor %}
+        </div>
+        <div class="row" style="margin-top: auto; margin-bottom: 10px; margin-left:10px">
+            <form action="{% url 'RFP:start' %}" method="get">
+                <button type="submit" class="button">Back</button>
+            </form>
         </div>
     </div>
 {% endblock %}

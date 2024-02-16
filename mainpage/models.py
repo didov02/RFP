@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 import uuid
 
 # Create your models here.
@@ -42,10 +43,11 @@ class BoughtItem(models.Model):
         return f"{self.item_name} - {self.item_code}"
     
 class Reservation(models.Model):
-    datetime = models.DateTimeField(default='2024-01-01T08:00')
+    datetime = models.DateTimeField(default=timezone.localtime(timezone.now()) + timezone.timedelta(hours=1))
     made_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     pitch = models.ForeignKey(Pitch, on_delete=models.CASCADE, null=True)
     reservation_code = models.CharField(max_length=10, unique=True, default=uuid.uuid4().hex[:6].upper())
+    participants = models.ManyToManyField(User, related_name='reservation_participants', blank=True)
 
     def __str__(self):
         return f"{self.pitch.name} reserved at {self.datetime} by {self.made_by.username}"

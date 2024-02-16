@@ -154,40 +154,26 @@ def settings(request):
 @login_required
 def detail(request, id):
     pitch = Pitch.objects.get(pk=id)
-    context = {
-        'pitch':pitch,
-    }
 
-    if request.user.is_authenticated:
-        context['username'] = request.user.username
-
-    return render(request, 'RFP_templates/detail.html', context)
-
-@login_required
-def make_reservation(request, id):
-    current_pitch = Pitch.objects.get(pk=id)
     form = ReservationForm(request.POST or None)
 
     if form.is_valid():
         reservation = form.save(commit=False)
         reservation.made_by = request.user
-        reservation.pitch = current_pitch
+        reservation.pitch = pitch
         reservation.reservation_code = generate_random_code()
-
-        if Reservation.objects.filter(pitch=current_pitch, datetime=reservation.datetime).exists():
-            form.add_error(None, 'There is already a reservation for this pitch at the selected datetime.')
-            print('Form not valid. Errors: ', form.errors)
-            return render(request, 'RFP_templates/makereservation.html', {'form': form})
-        
-        request.user.profile.tokens = request.user.profile.tokens + 1
-        request.user.profile.save()
         
         reservation.save()
+        reservation.participants.add(request.user)
+
+        request.user.profile.tokens = request.user.profile.tokens + 1
+        request.user.profile.save()
+
         return redirect('RFP:start')
     else:
         print('Form not valid. Errors: ', form.errors)
 
-    return render(request, 'RFP_templates/makereservation.html', {'form':form})
+    return render(request, 'RFP_templates/detail.html', {'form':form, 'pitch':pitch})
 
 @login_required
 def add_post(request):
@@ -229,8 +215,15 @@ def bought_items(request):
 
 @login_required
 def see_reserved_pitches(request):
-    reservations = Reservation.objects.filter(made_by = request.user)
-    return render(request, 'RFP_templates/reservations.html', {'reservations':reservations})
+    reservations = Reservation.objects.all()
+
+    current_reservations = []
+
+    for reservation in reservations:
+        if request.user in reservation.participants.all() or request.user == reservation.made_by:
+            current_reservations.append(reservation)
+    
+    return render(request, 'RFP_templates/reservations.html', {'reservations':current_reservations})
 
 @login_required
 def personal_info(request, id):
@@ -294,3 +287,33 @@ def search_pitch(request):
         pitches = Pitch.objects.all()
 
     return render(request, 'RFP_templates/reservepitch.html', {'pitches' : pitches})
+
+@login_required
+def see_participants(request, id):
+    reservation = Reservation.objects.get(pk = id)
+    participants = reservation.participants.all()
+    return render(request, 'RFP_templates/seeparticipants.html', {'users': participants})
+
+@login_required
+def set_code(request):
+    return render(request, 'RFP_templates/setcode.html', {})
+
+@login_required
+def join_game(request):
+    code = request.GET.get('input_code')
+    reservations = Reservation.objects.exclude(made_by=request.user)
+    reservations_codes = [reservation.reservation_code for reservation in reservations]
+
+    if code in reservations_codes:
+        current_reservation = get_object_or_404(Reservation, reservation_code=code)
+        current_reservation.participants.add(request.user)
+
+    reservations = Reservation.objects.all()
+
+    current_reservations = []
+
+    for reservation in reservations:
+        if request.user in reservation.participants.all() or request.user == reservation.made_by:
+            current_reservations.append(reservation)
+    
+    return render(request, 'RFP_templates/reservations.html', {'reservations':current_reservations})

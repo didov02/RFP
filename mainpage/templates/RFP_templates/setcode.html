@@ -1,0 +1,15 @@
+{% extends 'RFP_templates/base.html' %}
+{% block body %}
+    <div class="column-right">
+        <form action="{% url 'RFP:join_game' %}" method="get" style="margin-top:250px;">
+            {% csrf_token %}
+            <input type="text" name="input_code"  class="searchBar" placeholder="Enter Game..">
+            <button class="button" id="searchButton" style="width: 20%">Enter</button>
+        </form>
+        <div class="row" style="margin-top: auto; margin-bottom: 10px; margin-left:10px">
+            <form action="{% url 'RFP:start' %}" method="get">
+                <button type="submit" class="button">Back</button>
+            </form>
+        </div> 
+    </div>
+{% endblock %}
