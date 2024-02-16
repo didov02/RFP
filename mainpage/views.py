@@ -305,7 +305,7 @@ def search_pitch(request):
 def see_participants(request, id):
     reservation = Reservation.objects.get(pk = id)
     participants = reservation.participants.all()
-    return render(request, 'RFP_templates/seeparticipants.html', {'users': participants})
+    return render(request, 'RFP_templates/seeparticipants.html', {'users': participants, 'reservation':reservation})
 
 @login_required
 def set_code(request):
@@ -319,7 +319,11 @@ def join_game(request):
 
     if code in reservations_codes:
         current_reservation = get_object_or_404(Reservation, reservation_code=code)
-        current_reservation.participants.add(request.user)
+        current_reservation_creator = current_reservation.made_by
+        current_reservation_creator_friends = current_reservation_creator.profile.friends.all()
+
+        if request.user.profile in current_reservation_creator_friends:
+            current_reservation.participants.add(request.user)
 
     reservations = Reservation.objects.all()
 
@@ -353,3 +357,22 @@ def delete_item(request, id):
     item.delete()
 
     return redirect('RFP:start')
+
+@login_required
+def delete_friend(request, id):
+    current_user_profile = request.user.profile
+    friend_to_remove = Profile.objects.get(pk=id)
+    current_user_profile.friends.remove(friend_to_remove)
+
+    return redirect('RFP:start')
+
+@login_required
+def remove_participant(request, user_id, reservation_id):
+    participant = User.objects.get(pk = user_id)
+    reservation = Reservation.objects.get(pk = reservation_id)
+
+    reservation.participants.remove(participant)
+    reservation.save()
+
+    participants = reservation.participants.all()
+    return render(request, 'RFP_templates/seeparticipants.html', {'users': participants, 'reservation':reservation})

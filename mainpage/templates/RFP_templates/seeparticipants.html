@@ -25,6 +25,13 @@
                         <a href="{% url 'RFP:personal_info' current_user.id %}" class="friend-username">{{ current_user.profile.user.username }}</a>
                         <p style="margin-left:150px;">{{ current_user.profile.city }}, {{ current_user.profile.age }}, {{ current_user.profile.position }}</p>
                     </div>
+                    {% if current_user != user %}
+                        <div class="col-md-3 offset-md-2" style="position: absolute; top: 0; right: 0;">
+                            <form action="{% url 'RFP:remove_participant' current_user.id reservation.id%}" method="get">
+                                <button type="submit" class="button">Remove</button>
+                            </form>
+                        </div>
+                    {% endif %}
                 </div>
             {% endfor %}
         </div>

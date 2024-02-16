@@ -25,6 +25,11 @@
                         <a href="{% url 'RFP:personal_info' friend.user.id %}" class="friend-username">{{ friend.user.username }}</a>
                         <p style="margin-left:150px;">{{ friend.city }}, {{ friend.age }}, {{ friend.position }}</p>
                     </div>
+                    <div class="col-md-3 offset-md-2" style="position: absolute; top: 0; right: 0;">
+                        <form action="{% url 'RFP:delete_friend' friend.id %}" method="get">
+                            <button type="submit" class="button">Delete</button>
+                        </form>
+                    </div>
                 </div>
             {% endfor %}
         </div>

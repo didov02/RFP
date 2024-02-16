@@ -29,4 +29,6 @@ urlpatterns = [
     path('searchboughtitem/', views.search_bought_items, name='search_bought_items'),
     path('deletepost/<int:id>', views.delete_post, name='delete_post'),
     path('deleteitem/<int:id>', views.delete_item, name='delete_item'),
+    path('deletefriend/<int:id>', views.delete_friend, name='delete_friend'),
+    path('removeparticipant/<int:user_id>/<int:reservation_id>', views.remove_participant, name='remove_participant'),
 ]
