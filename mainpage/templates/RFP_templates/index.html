@@ -1,9 +1,10 @@
 {% extends 'RFP_templates/base.html' %}
 {% block body %}
-    <div class="column-right">
-        <form method="post" action="{% url 'RFP:set_message' %}">
+    <div class="column-right" style="padding-top: 20px;">
+        <form action="{% url 'RFP:add_post' %}" method="get">
             {% csrf_token %}
-            <button class="button" id="button" type="submit">Create a Post</button>
+            <input type="text" name="post" class="searchBar" placeholder="Your thoughts...">
+            <button class="button" id="searchButton" style="width: 20%">Post</button>
         </form>
         <div class="scrollable-form">
             {% for post in posts %} 

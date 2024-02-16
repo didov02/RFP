@@ -183,10 +183,6 @@ def detail(request, id):
     return render(request, 'RFP_templates/detail.html', {'form':form, 'pitch':pitch})
 
 @login_required
-def set_message(request):
-    return render(request, 'RFP_templates/addpost.html', {})
-
-@login_required
 def add_post(request):
     post_message = request.GET.get('post')
     new_post = Post.objects.create(
