@@ -1,12 +1,6 @@
 from django import forms
-from .models import Post
 from .models import Reservation
 from django.utils import timezone
-
-class PostForm(forms.ModelForm):
-    class Meta:
-        model = Post
-        fields = ['message']
 
 class ReservationForm(forms.ModelForm):
     class Meta:

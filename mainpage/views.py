@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Post, Item, Pitch, BoughtItem, Reservation
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
-from .forms import PostForm, ReservationForm
+from .forms import ReservationForm
 from .additional_functions import generate_random_code
 from django.contrib.auth.models import User
 from users.forms import ProfileForm
@@ -24,7 +24,7 @@ def start(request):
     posts_from_friends = []
 
     for post in posts:
-        if post.from_user == current_user.username or post.from_user in friends_usernames:
+        if post.from_user.username == current_user.username or post.from_user.username in friends_usernames:
             posts_from_friends.append(post)
 
     posts_from_friends = sorted(posts_from_friends, key=lambda x: x.written_at, reverse=True)
@@ -183,20 +183,21 @@ def detail(request, id):
     return render(request, 'RFP_templates/detail.html', {'form':form, 'pitch':pitch})
 
 @login_required
-def add_post(request):
-    form = PostForm(request.POST or None)
+def set_message(request):
+    return render(request, 'RFP_templates/addpost.html', {})
 
-    if form.is_valid():
-        post = form.save(commit=False) 
-        post.from_user = request.user.username
-        post.written_at = timezone.now()
-        post.image = request.user.profile.image
-        post.save()
-        return redirect('RFP:start')
-    else:
-        print('Form not valid. Errors: ', form.errors)
-    
-    return render(request, 'RFP_templates/addpost.html', {'form': form})
+@login_required
+def add_post(request):
+    post_message = request.GET.get('post')
+    new_post = Post.objects.create(
+        from_user = request.user,
+        written_at = timezone.now(),
+        message = str(post_message),
+    )
+
+    new_post.save()
+
+    return redirect('RFP:start')
 
 @login_required
 def buy_item(request, id):

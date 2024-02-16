@@ -8,12 +8,11 @@ import uuid
 class Post(models.Model):
 
     def __str__(self):
-        return self.from_user
+        return self.from_user.username
     
-    from_user = models.CharField(max_length = 200, default='unknown')
+    from_user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, default=1)
     written_at = models.DateTimeField()
     message = models.CharField(max_length = 500)
-    image = models.ImageField()
 
 class Pitch(models.Model):
 
