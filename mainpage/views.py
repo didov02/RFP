@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from users.forms import ProfileForm
 from users.models import Profile
 from users.models import FriendRequest
+from django.contrib import messages
 
 # Create your views here.
 @login_required
@@ -162,7 +163,7 @@ def settings(request):
 def detail(request, id):
     pitch = Pitch.objects.get(pk=id)
 
-    form = ReservationForm(request.POST or None)
+    form = ReservationForm(request.POST or None, request=request)
 
     if form.is_valid():
         reservation = form.save(commit=False)
@@ -176,9 +177,8 @@ def detail(request, id):
         request.user.profile.tokens = request.user.profile.tokens + 1
         request.user.profile.save()
 
-        return redirect('RFP:start')
-    else:
-        print('Form not valid. Errors: ', form.errors)
+        messages.success(request, 'Reservation succcessfully made!')
+        return redirect('RFP:reserve_pitch')
 
     return render(request, 'RFP_templates/detail.html', {'form':form, 'pitch':pitch})
 
@@ -209,6 +209,11 @@ def buy_item(request, id):
             item_code = generate_random_code(),
             bought_from=request.user
         )
+        
+        messages.success(request, "Item successfully bought!")
+    else:
+        messages.success(request, "You can't buy the item because you don't have enough tokens!")
+        return redirect('RFP:shop')
 
     return redirect('RFP:bought_items')
 
@@ -269,6 +274,7 @@ def search_items(request):
         searched_items = Item.objects.filter(name=searched_item_name)
         items = list(searched_items)
     else:
+        messages.success(request, "This item doesn't exist!")
         items = Item.objects.all()
 
     return render(request, 'RFP_templates/shop.html', {'items': items})
@@ -283,6 +289,7 @@ def search_bought_items(request):
         searched_items = items.filter(item_name__name=searched_item_name)
         items = list(searched_items)
     else:
+        messages.success(request, "This item doesn't exist!")
         items = BoughtItem.objects.all()
 
     return render(request, 'RFP_templates/boughtitems.html', {'bought_items': items})
@@ -297,6 +304,7 @@ def search_pitch(request):
         searched_pitches = Pitch.objects.filter(name=searched_pitch_name)
         pitches = list(searched_pitches)
     else:
+        messages.success(request, "This pitch doesn't exist!")
         pitches = Pitch.objects.all()
 
     return render(request, 'RFP_templates/reservepitch.html', {'pitches' : pitches})
@@ -305,7 +313,8 @@ def search_pitch(request):
 def see_participants(request, id):
     reservation = Reservation.objects.get(pk = id)
     participants = reservation.participants.all()
-    return render(request, 'RFP_templates/seeparticipants.html', {'users': participants, 'reservation':reservation})
+    reservation_creator = reservation.made_by
+    return render(request, 'RFP_templates/seeparticipants.html', {'users': participants, 'reservation':reservation, 'creator':reservation_creator})
 
 @login_required
 def set_code(request):
@@ -324,7 +333,13 @@ def join_game(request):
 
         if request.user.profile in current_reservation_creator_friends:
             current_reservation.participants.add(request.user)
-
+        else:
+            messages.success(request, "You can't join a game where the creator is not your friend!")
+            return redirect('RFP:join_game')
+    else:
+        messages.success(request, "This game doesn't exist!")
+        return redirect('RFP:set_code')
+    
     reservations = Reservation.objects.all()
 
     current_reservations = []
@@ -338,9 +353,11 @@ def join_game(request):
 @login_required
 def delete_reservation(request, id):
     reservation = Reservation.objects.get(pk = id)
+    request.user.profile.tokens -= 1
+    request.user.profile.save()
     reservation.delete()
 
-    return redirect('RFP:start')
+    return redirect('RFP:see_reserved_pitches')
 
 @login_required
 def delete_post(request, id):
@@ -371,6 +388,7 @@ def remove_participant(request, user_id, reservation_id):
     participant = User.objects.get(pk = user_id)
     reservation = Reservation.objects.get(pk = reservation_id)
 
+    messages.success(request, f'You have removed {participant.username}!')
     reservation.participants.remove(participant)
     reservation.save()
 

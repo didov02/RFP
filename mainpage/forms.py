@@ -1,8 +1,13 @@
 from django import forms
 from .models import Reservation
 from django.utils import timezone
+from django.contrib import messages
 
 class ReservationForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super().__init__(*args, **kwargs)
+
     class Meta:
         model = Reservation
         fields = ['datetime']
@@ -16,19 +21,19 @@ class ReservationForm(forms.ModelForm):
 
         if datetime_value:
             current_datetime = timezone.localtime(timezone.now())
-
-            if datetime_value < current_datetime:
-                raise forms.ValidationError('Reservation datetime cannot be in the past.')
-
             rounded_current_time = current_datetime.replace(minute=0, second=0, microsecond=0)
 
-            if datetime_value <= rounded_current_time:
-                raise forms.ValidationError('Reservation datetime must be at least one hour in the future and rounded to the next full hour.')
-
-            if not (8 <= datetime_value.hour <= 23):
+            if datetime_value < current_datetime:
+                messages.success(self.request, 'Reservation date cannot be in the past.')
+                raise forms.ValidationError('Reservation date cannot be in the past.')
+            elif datetime_value <= rounded_current_time:
+                messages.success(self.request, 'Reservation time must be at least one hour in the future and rounded to the next full hour.')
+                raise forms.ValidationError('Reservation time must be at least one hour in the future and rounded to the next full hour.')
+            elif not (8 <= datetime_value.hour <= 23):
+                messages.success(self.request, 'Reservation hour must be between 8am and 11pm.')
                 raise forms.ValidationError('Reservation hour must be between 8am and 11pm.')
-            
-            if datetime_value.minute != 0:
+            elif datetime_value.minute != 0:
+                messages.success(self.request, 'Reservation must be made for a round hour.')
                 raise forms.ValidationError('Reservation must be made for a round hour.')
 
         return cleaned_data
