@@ -198,7 +198,7 @@ def add_post(request):
 @login_required
 def buy_item(request, id):
     item = Item.objects.get(pk=id)
-    item_price = int(request.GET['price'])
+    item_price = item.price
     
     if request.user.profile.tokens - item_price >= 0:
         request.user.profile.tokens -= item_price
@@ -304,7 +304,7 @@ def search_pitch(request):
         searched_pitches = Pitch.objects.filter(name=searched_pitch_name)
         pitches = list(searched_pitches)
     else:
-        messages.success(request, "This pitch doesn't exist!")
+        messages.success(request, "This item doesn't exist!")
         pitches = Pitch.objects.all()
 
     return render(request, 'RFP_templates/reservepitch.html', {'pitches' : pitches})
