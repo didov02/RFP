@@ -10,7 +10,7 @@ class Post(models.Model):
     def __str__(self):
         return self.from_user.username
     
-    from_user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, default=1)
+    from_user = models.ForeignKey(User, on_delete = models.CASCADE, null = True, default = 1)
     written_at = models.DateTimeField()
     message = models.CharField(max_length = 500)
 
@@ -31,22 +31,22 @@ class Item(models.Model):
     
     name = models.CharField(max_length = 200)
     price = models.IntegerField()
-    image = models.CharField(max_length = 500, default="https://c1.wallpaperflare.com/preview/305/482/405/music-grocer-grocery-store-sales-stand.jpg")
+    image = models.CharField(max_length = 500, default = "https://c1.wallpaperflare.com/preview/305/482/405/music-grocer-grocery-store-sales-stand.jpg")
 
 class BoughtItem(models.Model):
-    item_name = models.ForeignKey(Item, on_delete=models.CASCADE, null=True)
-    item_code = models.CharField(max_length=10, unique=True, default=uuid.uuid4().hex[:6].upper())
-    bought_from = models.ForeignKey(User, on_delete=models.CASCADE, null=True, default=1)
+    item_name = models.ForeignKey(Item, on_delete = models.CASCADE, null =True)
+    item_code = models.CharField(max_length = 10, unique = True, default = uuid.uuid4().hex[:6].upper())
+    bought_from = models.ForeignKey(User, on_delete = models.CASCADE, null = True, default = 1)
 
     def __str__(self):
         return f"{self.item_name} - {self.item_code}"
     
 class Reservation(models.Model):
-    datetime = models.DateTimeField(default=timezone.localtime(timezone.now()) + timezone.timedelta(hours=1))
-    made_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-    pitch = models.ForeignKey(Pitch, on_delete=models.CASCADE, null=True)
-    reservation_code = models.CharField(max_length=10, unique=True, default=uuid.uuid4().hex[:6].upper())
-    participants = models.ManyToManyField(User, related_name='reservation_participants', blank=True)
+    datetime = models.DateTimeField(default = timezone.localtime(timezone.now()) + timezone.timedelta(hours = 1))
+    made_by = models.ForeignKey(User, on_delete = models.CASCADE, null = True)
+    pitch = models.ForeignKey(Pitch, on_delete = models.CASCADE, null = True)
+    reservation_code = models.CharField(max_length = 10, unique = True, default = uuid.uuid4().hex[:6].upper())
+    participants = models.ManyToManyField(User, related_name = 'reservation_participants', blank = True)
 
     def __str__(self):
         return f"{self.pitch.name} reserved at {self.datetime} by {self.made_by.username}"

@@ -16,4 +16,6 @@ class ProfileForm(forms.ModelForm):
         model = Profile
         fields = ['age', 'city', 'position', 'image']
 
-    image = forms.ImageField(required=False)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['image'].required = False

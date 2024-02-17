@@ -28,7 +28,7 @@ def start(request):
         if post.from_user.username == current_user.username or post.from_user.username in friends_usernames:
             posts_from_friends.append(post)
 
-    posts_from_friends = sorted(posts_from_friends, key=lambda x: x.written_at, reverse=True)
+    posts_from_friends = sorted(posts_from_friends, key = lambda x: x.written_at, reverse = True)
 
     context['posts'] = posts_from_friends
 
@@ -41,38 +41,30 @@ def reserve_pitch(request):
         'pitches' : pitches,
     }
 
-    if request.user.is_authenticated:
-        context['username'] = request.user.username
-
     return render(request, 'RFP_templates/reservepitch.html', context)
 
 @login_required
 def friends(request):
-    context = {}
-
-    if request.user.is_authenticated:
-        context['username'] = request.user.username
-
-    return render(request, 'RFP_templates/friends.html', context)
+    return render(request, 'RFP_templates/friends.html', {})
 
 @login_required
 def send_requests(request):
     current_user = request.user
-    current_user_profile = request.user.profile
+    current_user_profile = current_user.profile
 
-    all_users = User.objects.exclude(pk=current_user.id)
+    all_users = User.objects.exclude(pk = current_user.id)
 
     users_not_friends = []
 
     for checking_user in all_users:
         friend_request_exists = FriendRequest.objects.filter(
-            sender=checking_user,
-            receiver=current_user
+            sender = checking_user,
+            receiver = current_user
         ).exists()
 
         reverse_friend_request_exists = FriendRequest.objects.filter(
-            sender=current_user,
-            receiver=checking_user
+            sender = current_user,
+            receiver = checking_user
         ).exists()
 
         if not friend_request_exists and not reverse_friend_request_exists and checking_user.profile not in current_user_profile.friends.all():
@@ -83,32 +75,32 @@ def send_requests(request):
 @login_required
 def send_request(request, id):
     current_user = request.user
-    sender= current_user
-    receiver=User.objects.get(pk=id)
+    sender = current_user
+    receiver = User.objects.get(pk=id)
 
     friend_request = FriendRequest.objects.create(
-        sender=sender,
-        receiver=receiver,
+        sender = sender,
+        receiver = receiver,
     )
 
-    receiver_profile = Profile.objects.get(user=receiver)
+    receiver_profile = Profile.objects.get(user = receiver)
     receiver_profile.received_friend_requests.add(friend_request)
 
-    current_user_profile = Profile.objects.get(user=current_user)
+    current_user_profile = Profile.objects.get(user = current_user)
 
-    all_users = User.objects.exclude(pk=current_user.id).exclude(pk=id)
+    all_users = User.objects.exclude(pk = current_user.id).exclude(pk = id)
 
     users_not_friends = []
 
     for checking_user in all_users:
         friend_request_exists = FriendRequest.objects.filter(
-            sender=checking_user,
-            receiver=current_user
+            sender = checking_user,
+            receiver = current_user
         ).exists()
 
         reverse_friend_request_exists = FriendRequest.objects.filter(
-            sender=current_user,
-            receiver=checking_user
+            sender = current_user,
+            receiver = checking_user
         ).exists()
 
         if not friend_request_exists and not reverse_friend_request_exists and checking_user.profile not in current_user_profile.friends.all():
@@ -130,7 +122,7 @@ def see_friends_request(request):
 @login_required
 def accept_request(request, id):
     current_user = request.user
-    sender = User.objects.get(pk=id)
+    sender = User.objects.get(pk = id)
 
     friend_request = FriendRequest.objects.filter(sender = sender, receiver = request.user)
     friend_request.delete()
@@ -150,23 +142,13 @@ def shop(request):
     return render(request, 'RFP_templates/shop.html', context)
 
 @login_required
-def settings(request):
-    context = {}
-
-    if request.user.is_authenticated:
-        context['username'] = request.user.username
-        context['email'] = request.user.email
-
-    return render(request, 'RFP_templates/settings.html', context) 
-
-@login_required
 def detail(request, id):
-    pitch = Pitch.objects.get(pk=id)
+    pitch = Pitch.objects.get(pk = id)
 
-    form = ReservationForm(request.POST or None, request=request)
+    form = ReservationForm(request.POST or None, request = request)
 
     if form.is_valid():
-        reservation = form.save(commit=False)
+        reservation = form.save(commit = False)
         reservation.made_by = request.user
         reservation.pitch = pitch
         reservation.reservation_code = generate_random_code()
@@ -197,7 +179,7 @@ def add_post(request):
 
 @login_required
 def buy_item(request, id):
-    item = Item.objects.get(pk=id)
+    item = Item.objects.get(pk = id)
     item_price = item.price
     
     if request.user.profile.tokens - item_price >= 0:
@@ -205,21 +187,21 @@ def buy_item(request, id):
         request.user.profile.save()
 
         BoughtItem.objects.create(
-            item_name=item,
+            item_name = item,
             item_code = generate_random_code(),
-            bought_from=request.user
+            bought_from = request.user
         )
         
         messages.success(request, "Item successfully bought!")
     else:
-        messages.success(request, "You can't buy the item because you don't have enough tokens!")
+        messages.error(request, "You cannot buy the item because you do not have enough tokens!")
         return redirect('RFP:shop')
 
     return redirect('RFP:bought_items')
 
 @login_required
 def bought_items(request):
-    bought_items = BoughtItem.objects.filter(bought_from=request.user)
+    bought_items = BoughtItem.objects.filter(bought_from = request.user)
     return render(request, 'RFP_templates/boughtitems.html', {'bought_items': bought_items})
 
 @login_required
@@ -229,14 +211,14 @@ def see_reserved_pitches(request):
     current_reservations = []
 
     for reservation in reservations:
-        if request.user in reservation.participants.all() or request.user == reservation.made_by:
+        if request.user in reservation.participants.all():
             current_reservations.append(reservation)
     
     return render(request, 'RFP_templates/reservations.html', {'reservations':current_reservations, 'user':request.user})
 
 @login_required
 def personal_info(request, id):
-    show_user = User.objects.get(pk=id)
+    show_user = User.objects.get(pk = id)
     return render(request, 'RFP_templates/personalinfo.html', {'shown_user' : show_user})
 
 @login_required
@@ -253,7 +235,7 @@ def change_info(request):
             user_profile.save()
             return redirect('RFP:start')
     else:
-        form = ProfileForm(instance=user_profile)
+        form = ProfileForm(instance = user_profile)
 
     return render(request, 'RFP_templates/changepersonalinfo.html', {'form': form})
 
@@ -271,10 +253,10 @@ def search_items(request):
     items_names = [item.name for item in items]
 
     if searched_item_name in items_names:
-        searched_items = Item.objects.filter(name=searched_item_name)
+        searched_items = Item.objects.filter(name = searched_item_name)
         items = list(searched_items)
     else:
-        messages.success(request, "This item doesn't exist!")
+        messages.error(request, "This item does not exist!")
         items = Item.objects.all()
 
     return render(request, 'RFP_templates/shop.html', {'items': items})
@@ -286,10 +268,10 @@ def search_bought_items(request):
     items_names = [item.item_name.name for item in items]
 
     if searched_item_name in items_names:
-        searched_items = items.filter(item_name__name=searched_item_name)
+        searched_items = items.filter(item_name__name = searched_item_name)
         items = list(searched_items)
     else:
-        messages.success(request, "This item doesn't exist!")
+        messages.error(request, "This item does not exist!")
         items = BoughtItem.objects.all()
 
     return render(request, 'RFP_templates/boughtitems.html', {'bought_items': items})
@@ -301,10 +283,10 @@ def search_pitch(request):
     pitches_names = [pitch.name for pitch in  pitches]
 
     if searched_pitch_name in pitches_names:
-        searched_pitches = Pitch.objects.filter(name=searched_pitch_name)
+        searched_pitches = Pitch.objects.filter(name = searched_pitch_name)
         pitches = list(searched_pitches)
     else:
-        messages.success(request, "This item doesn't exist!")
+        messages.error(request, "This pitch does not exist!")
         pitches = Pitch.objects.all()
 
     return render(request, 'RFP_templates/reservepitch.html', {'pitches' : pitches})
@@ -323,21 +305,21 @@ def set_code(request):
 @login_required
 def join_game(request):
     code = request.GET.get('input_code')
-    reservations = Reservation.objects.exclude(made_by=request.user)
+    reservations = Reservation.objects.exclude(made_by = request.user)
     reservations_codes = [reservation.reservation_code for reservation in reservations]
 
     if code in reservations_codes:
-        current_reservation = get_object_or_404(Reservation, reservation_code=code)
+        current_reservation = get_object_or_404(Reservation, reservation_code = code)
         current_reservation_creator = current_reservation.made_by
         current_reservation_creator_friends = current_reservation_creator.profile.friends.all()
 
         if request.user.profile in current_reservation_creator_friends:
             current_reservation.participants.add(request.user)
         else:
-            messages.success(request, "You can't join a game where the creator is not your friend!")
+            messages.error(request, "You cannot join a game where the creator is not your friend!")
             return redirect('RFP:join_game')
     else:
-        messages.success(request, "This game doesn't exist!")
+        messages.error(request, "This game does not exist!")
         return redirect('RFP:set_code')
     
     reservations = Reservation.objects.all()
@@ -378,7 +360,7 @@ def delete_item(request, id):
 @login_required
 def delete_friend(request, id):
     current_user_profile = request.user.profile
-    friend_to_remove = Profile.objects.get(pk=id)
+    friend_to_remove = Profile.objects.get(pk = id)
     current_user_profile.friends.remove(friend_to_remove)
 
     return redirect('RFP:start')
