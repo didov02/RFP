@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from .models import Post, Item, Pitch, BoughtItem, Reservation
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
@@ -112,10 +112,7 @@ def send_request(request, id):
 def see_friends_request(request):
     friend_requests = request.user.profile.received_friend_requests.all()
 
-    senders = []
-
-    for friend_request in friend_requests:
-        senders.append(friend_request.sender)
+    senders = [friend_request.sender for friend_request in friend_requests]
 
     return render(request, 'RFP_templates/seefriendrequests.html', {'senders': senders})
 
@@ -309,7 +306,7 @@ def join_game(request):
     reservations_codes = [reservation.reservation_code for reservation in reservations]
 
     if code in reservations_codes:
-        current_reservation = get_object_or_404(Reservation, reservation_code = code)
+        current_reservation = Reservation.objects.get(reservation_code=code)
         current_reservation_creator = current_reservation.made_by
         current_reservation_creator_friends = current_reservation_creator.profile.friends.all()
 
